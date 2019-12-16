@@ -6,22 +6,21 @@ import java.util.concurrent.Executors;
  * using algorithm of "Sieve of Eratosthenes"
  *
  * @author m.lukyaniuk
- * @see PrimeNumbersHelper
  */
 public class CalculatePrime {
     private static final int MAX_THREADS = 2;
-    private static final int N = 100;
+//    static final int N = 1000000;
+
+
 
     public static void main(String[] args) {
-        PrimeNumbersHelper primeNumbersCalculator = new PrimeNumbersHelper();
-        primeNumbersCalculator.fillNaturalNumbers(N);
+        PrimeNumbersClass.fillNaturalNumbersCandidates();
 
         ExecutorService executor = Executors.newFixedThreadPool(MAX_THREADS);
         for (int i = 0; i < MAX_THREADS; i++) {
-            Runnable worker = new PrimeNumbersCalculatorRunnable("d:/Thread" + (i+1) + ".txt", i);
-            executor.execute(worker);
-
+            Runnable primeNumbersCalculatorRunnable = new PrimeNumbersCalculatorRunnable();
+            executor.execute(primeNumbersCalculatorRunnable);
         }
+        executor.shutdown();
     }
 }
-

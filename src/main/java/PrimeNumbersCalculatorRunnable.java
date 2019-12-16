@@ -1,24 +1,36 @@
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class PrimeNumbersCalculatorRunnable implements Runnable {
-    private CopyOnWriteArrayList<Integer> naturalNumbers;
-    private String ownFileName;
-    private int option;
 
-    public PrimeNumbersCalculatorRunnable(String ownFileName, int option) {
-        this.ownFileName = ownFileName;
-        this.option = option;
-        this.naturalNumbers = PrimeNumbersHelper.NATURAL_NUMBERS;
+    public PrimeNumbersCalculatorRunnable() {
     }
 
     @Override
     public void run() {
-        for (int i = option; i < naturalNumbers.size(); i += 2) {
-            int primeNumber;
-                primeNumber = naturalNumbers.get(i);
-            if (PrimeNumbersHelper.isPrime(primeNumber)) {
-                CustomFileWriter.usingBufferedWritter(primeNumber + " ", "d:/Result.txt");
-                CustomFileWriter.usingBufferedWritter(primeNumber + " ", ownFileName);
+        Integer primeNumber;
+        int firstPrimeNumber = 2;
+        int lastDigitOne = 1;
+        int lastDigitTwo = 7;
+        while (PrimeNumbersClass.NATURAL_NUMBERS_CANDIDATES.size() > 0) {
+
+            if ("pool-1-thread-1".equals(Thread.currentThread().getName())) {
+                firstPrimeNumber = 5;
+                lastDigitOne = 3;
+                lastDigitTwo = 9;
+            }
+            int tempPrime;
+            if (PrimeNumbersClass.NATURAL_NUMBERS_CANDIDATES.size() > 0) {
+                tempPrime = PrimeNumbersClass.NATURAL_NUMBERS_CANDIDATES.peek();
+
+                if (tempPrime % 10 == lastDigitOne || tempPrime % 10 == lastDigitTwo || tempPrime == firstPrimeNumber) {
+                    synchronized (PrimeNumbersClass.NATURAL_NUMBERS_CANDIDATES) {
+                        primeNumber = PrimeNumbersClass.NATURAL_NUMBERS_CANDIDATES.poll();
+                        PrimeNumbersClass.applyEratosthenesAlgoruthmSearchOfPrimeNumbers(primeNumber);
+                    }
+                    CustomFileWriter.usingBufferedWritter(primeNumber + " ", "d:/test/" + Thread.currentThread().getName() + ".txt");
+                    CustomFileWriter.usingBufferedWritter(primeNumber + " ", "d:/test/Result.txt");
+                }
             }
         }
     }
